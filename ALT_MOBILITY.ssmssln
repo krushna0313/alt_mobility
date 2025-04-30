@@ -1,10 +1,12 @@
 **All the SQL SERVER Queries**
 
 
-
+**creating database**
 CREATE DATABASE development;
 USE development;
 
+
+**Define data types and Constrants**
 ALTER TABLE payments
 ADD CONSTRAINT FK_payments_orders
 FOREIGN KEY (order_id) REFERENCES customer_orders(order_id);
@@ -25,6 +27,7 @@ WHERE
     tc.CONSTRAINT_TYPE = 'PRIMARY KEY';
 
 
+** Creating relationship between tables using foreign key**
 SELECT 
     fk.name AS FK_Name,
     tp.name AS Parent_Table,
@@ -45,7 +48,7 @@ INNER JOIN
     sys.columns AS cr ON fkc.referenced_object_id = cr.object_id AND fkc.referenced_column_id = cr.column_id;
 
 
-
+** To check whether data is appropriate or not like Null Value **
 -- 1. Delete rows with NULLs in PRIMARY KEY or essential FOREIGN KEY columns
 DELETE FROM payments
 WHERE payment_id IS NULL OR order_id IS NULL OR payment_date IS NULL;
@@ -92,6 +95,7 @@ SET payment_amount = (
 WHERE payment_amount IS NULL;
 
 
+** Queries for completing Task **
 
 --Task 1: Order and Sales Analysis
 
@@ -167,6 +171,9 @@ ORDER BY c.order_date;
 SELECT COUNT(*) FROM customer_orders WHERE order_id IS NULL OR customer_id IS NULL;
 SELECT COUNT(*) FROM payments WHERE payment_id IS NULL OR order_id IS NULL;
 
+
+
+** Extra Query to find out insights from data **
 
 --Find unmatched payments (orphan records)
 SELECT * FROM payments
