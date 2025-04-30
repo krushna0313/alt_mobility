@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# SQL Server Management Studio Solution File, Format Version 20.00
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "ALT_MOBILITY", "ALT_MOBILITY\ALT_MOBILITY.ssmssqlproj", "{6021F980-0F7A-4238-A9F2-13135C50FAB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Default = Default|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6021F980-0F7A-4238-A9F2-13135C50FAB0}.Default|Default.ActiveCfg = Default
+		{99A3F1E7-4371-4A53-88C2-6C673C586669}.Default|Default.ActiveCfg = Default
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE2710B4-DFEB-41A8-ADD6-55631F2EF676}
+	EndGlobalSection
+EndGlobal
