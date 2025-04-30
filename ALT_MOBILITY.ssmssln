@@ -1,202 +1,22 @@
-**All the SQL SERVER Queries**
-
-
-**creating database**
-CREATE DATABASE development;
-USE development;
-
-
-**Define data types and Constrants**
-ALTER TABLE payments
-ADD CONSTRAINT FK_payments_orders
-FOREIGN KEY (order_id) REFERENCES customer_orders(order_id);
-
-SELECT * FROM customer_orders;
-SELECT * FROM payments;
-
-SELECT 
-    tc.TABLE_NAME,
-    kcu.COLUMN_NAME,
-    tc.CONSTRAINT_NAME
-FROM 
-    INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc
-JOIN 
-    INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS kcu
-    ON tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME
-WHERE 
-    tc.CONSTRAINT_TYPE = 'PRIMARY KEY';
-
-
-** Creating relationship between tables using foreign key**
-SELECT 
-    fk.name AS FK_Name,
-    tp.name AS Parent_Table,
-    cp.name AS Parent_Column,
-    tr.name AS Referenced_Table,
-    cr.name AS Referenced_Column
-FROM 
-    sys.foreign_keys AS fk
-INNER JOIN 
-    sys.foreign_key_columns AS fkc ON fk.object_id = fkc.constraint_object_id
-INNER JOIN 
-    sys.tables AS tp ON fkc.parent_object_id = tp.object_id
-INNER JOIN 
-    sys.columns AS cp ON fkc.parent_object_id = cp.object_id AND fkc.parent_column_id = cp.column_id
-INNER JOIN 
-    sys.tables AS tr ON fkc.referenced_object_id = tr.object_id
-INNER JOIN 
-    sys.columns AS cr ON fkc.referenced_object_id = cr.object_id AND fkc.referenced_column_id = cr.column_id;
-
-
-** To check whether data is appropriate or not like Null Value **
--- 1. Delete rows with NULLs in PRIMARY KEY or essential FOREIGN KEY columns
-DELETE FROM payments
-WHERE payment_id IS NULL OR order_id IS NULL OR payment_date IS NULL;
-
-DELETE FROM customer_orders
-WHERE order_id IS NULL OR customer_id IS NULL OR order_date IS NULL;
-
--- 2. Replace NULL payment_status with 'Unknown'
-UPDATE payments
-SET payment_status = 'Unknown'
-WHERE payment_status IS NULL;
-
--- 3. Replace NULL payment_method with 'Unspecified'
-UPDATE payments
-SET payment_method = 'Unspecified'
-WHERE payment_method IS NULL;
-
--- 4. Replace NULL order_status with 'Pending'
-UPDATE customer_orders
-SET order_status = 'Pending'
-WHERE order_status IS NULL;
-
--- 5. Replace NULL shipping_address with 'Address Not Provided'
-UPDATE customer_orders
-SET shipping_address = 'Address Not Provided'
-WHERE shipping_address IS NULL;
-
--- 6. Impute NULL order_amount with average (from non-null values)
-UPDATE customer_orders
-SET order_amount = (
-    SELECT AVG(order_amount) 
-    FROM customer_orders 
-    WHERE order_amount IS NOT NULL
-)
-WHERE order_amount IS NULL;
-
--- 7. Impute NULL payment_amount with average (from non-null values)
-UPDATE payments
-SET payment_amount = (
-    SELECT AVG(payment_amount) 
-    FROM payments 
-    WHERE payment_amount IS NOT NULL
-)
-WHERE payment_amount IS NULL;
-
-
-** Queries for completing Task **
-
---Task 1: Order and Sales Analysis
-
---Total Orders by Status
-SELECT order_status, COUNT(*) AS total_orders
-FROM customer_orders
-GROUP BY order_status;
-
---Monthly Sales Trend
-SELECT 
-    FORMAT(order_date, 'yyyy-MM') AS month,
-    SUM(order_amount) AS total_sales
-FROM customer_orders
-GROUP BY FORMAT(order_date, 'yyyy-MM')
-ORDER BY month;
-
---Task 2: Customer Analysis
-
---Repeat Customers (more than one order)
-SELECT customer_id, COUNT(*) AS order_count
-FROM customer_orders
-GROUP BY customer_id
-HAVING COUNT(*) > 1;
-
---New vs. Returning Orders by Month
-WITH FirstOrder AS (
-    SELECT customer_id, MIN(order_date) AS first_order_date
-    FROM customer_orders
-    GROUP BY customer_id
-)
-SELECT 
-    FORMAT(o.order_date, 'yyyy-MM') AS month,
-    COUNT(CASE WHEN o.order_date = f.first_order_date THEN 1 END) AS new_customers,
-    COUNT(CASE WHEN o.order_date > f.first_order_date THEN 1 END) AS returning_customers
-FROM customer_orders o
-JOIN FirstOrder f ON o.customer_id = f.customer_id
-GROUP BY FORMAT(o.order_date, 'yyyy-MM')
-ORDER BY month;
-
---Task 3: Payment Status Analysis
---Payment Status Breakdown
-SELECT payment_status, COUNT(*) AS total_payments
-FROM payments
-GROUP BY payment_status;
-
-
---Failed Payments and Their Orders
-SELECT p.payment_id, p.order_id, c.order_amount, p.payment_method
-FROM payments p
-JOIN customer_orders c ON p.order_id = c.order_id
-WHERE p.payment_status = 'Failed';
-
-
-
---Task 4: Order Details Report
-SELECT 
-    c.order_id,
-    c.customer_id,
-    c.order_date,
-    c.order_amount,
-    c.order_status,
-    p.payment_id,
-    p.payment_date,
-    p.payment_amount,
-    p.payment_method,
-    p.payment_status
-FROM customer_orders c
-LEFT JOIN payments p ON c.order_id = p.order_id
-ORDER BY c.order_date;
-
-
---Check for NULLs in key fields
-SELECT COUNT(*) FROM customer_orders WHERE order_id IS NULL OR customer_id IS NULL;
-SELECT COUNT(*) FROM payments WHERE payment_id IS NULL OR order_id IS NULL;
-
-
-
-** Extra Query to find out insights from data **
-
---Find unmatched payments (orphan records)
-SELECT * FROM payments
-WHERE order_id NOT IN (SELECT order_id FROM customer_orders);
-
---Find orders without payments
-SELECT * FROM customer_orders
-WHERE order_id NOT IN (SELECT order_id FROM payments);
-
-
---Average Order Value
-SELECT AVG(order_amount) AS average_order_value
-FROM customer_orders;
-
---Top Customers by Sales
-SELECT TOP 10 customer_id, SUM(order_amount) AS total_spent
-FROM customer_orders
-GROUP BY customer_id
-ORDER BY total_spent DESC;
-
---Which payment methods are most used?
-SELECT payment_method, COUNT(*) AS usage_count
-FROM payments
-GROUP BY payment_method
-ORDER BY usage_count DESC;
-
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# SQL Server Management Studio Solution File, Format Version 20.00
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "ALT_MOBILITY", "ALT_MOBILITY\ALT_MOBILITY.ssmssqlproj", "{6021F980-0F7A-4238-A9F2-13135C50FAB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Default = Default|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6021F980-0F7A-4238-A9F2-13135C50FAB0}.Default|Default.ActiveCfg = Default
+		{99A3F1E7-4371-4A53-88C2-6C673C586669}.Default|Default.ActiveCfg = Default
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE2710B4-DFEB-41A8-ADD6-55631F2EF676}
+	EndGlobalSection
+EndGlobal
